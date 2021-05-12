@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+  <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <title>Users</title>
+</head>
+
+<body>
+<nav class="navbar navbar-light bg-dark justify-content-between">
+  <a class="navbar-brand">
+    <span style="color: #e2d1d1; font-weight: bold" class="letter" th:text="${userName}"></span>
+    <span style="color: #e2d1d1" th:text="'  with roles:  '" ></span>
+    <span style="color: #e2d1d1" th:if="${#strings.substring(userRoles,1).contains('A')}">ADMIN</span>
+    <span style="color: #e2d1d1" th:if="${#strings.substring(userRoles,1).contains('U')}">USER</span>
+  </a>
+  <form class="form-inline">
+    <a href="javascript: document.logoutForm.submit()" role="menuitem">
+      <span style="color: #e2d1d1" th:text="Logout" ></span></a>
+  </form>
+</nav>
+
+
+  <div class="row">
+    <div class="col-3">
+      <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <div sec:authorize="hasRole('ROLE_ADMIN')">
+          <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="/admin/users" role="tab"
+           aria-controls="v-pills-home" aria-selected="true">Admin</a>
+        </div>
+        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/user" role="tab"
+           aria-controls="v-pills-profile" aria-selected="false">User</a>
+      </div>
+    </div>
+  <div class="col-9">
+    <h1>Admin panel</h1>
+    <nav class="nav nav-tabs">
+      <a class="nav-link active" href="/admin/users">Users table</a>
+      <a class="nav-link" href="/admin/user-create">New user</a>
+    </nav>
+    <div>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">First Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Username</th>
+          <th scope="col">isActive</th>
+          <th scope="col">Authorities</th>
+          <th scope="col">Edit</th>
+          <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+          <td th:text="${user.id}"></td>
+          <td th:text="${user.firstName}"></td>
+          <td th:text="${user.lastName}"></td>
+          <td th:text="${user.email}"></td>
+          <td th:text="${user.username}"></td>
+          <td th:text="${user.isActive}"></td>
+          <td >
+            <p th:if="${#strings.substring(user.getAuthorities(),1).contains('A')}">ADMIN</p>
+            <p th:if="${#strings.substring(user.getAuthorities(),1).contains('U')}">USER</p>
+          </td>
+
+          <td><a href="#myUpdate" data-toggle="modal" th:data-user-id="${user.id}"
+                 th:data-user-fn="${user.firstName}"
+                 th:data-user-ln="${user.lastName}"
+                 th:data-user-em="${user.email}"
+                 th:data-user-un="${user.username}"
+                 th:data-user-r="${user.getAuthorities()}"
+                 class="btn btn-info btn-sm"
+                 role="button" >Edit</a></td>
+
+          <td><a href="#myDelete" data-toggle="modal" th:data-user-id="${user.id}"
+                 th:data-user-fn="${user.firstName}"
+                 th:data-user-ln="${user.lastName}"
+                 th:data-user-em="${user.email}"
+                 th:data-user-un="${user.username}"
+                 th:data-user-r="${user.getAuthorities()}"
+                 class="btn btn-danger btn-sm delBtn">Delete</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+
+<!-- Modal Delete-->
+  <div class="modal fade" id="myDelete" tabindex="-1"
+       role="dialog" aria-labelledby="myDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myDeleteLabel">Delete user</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" align="center">
+          <form action="#" th:object="${user}" method="post">
+            <div class="form-group col-3 justify-content-between">
+              <label for="id_d">ID</label>
+              <input readonly type="text" class="form-control"  id="id_d" name="id_d" value="">
+            </div>
+            <div class="form-group col-3 justify-content-between">
+              <label for="firstName_d">First Name</label>
+              <input readonly type="text" class="form-control"  id="firstName_d" name="firstName_d" value="">
+            </div>
+            <div class="form-group col-3 justify-content-between">
+              <label for="lastName_d">Last Name</label>
+              <input readonly type="text" class="form-control" id="lastName_d" name="lastName_d" value="">
+            </div>
+            <div class="form-group col-4 justify-content-between">
+              <label for="email_d">Email</label>
+              <input readonly class="form-control" type="text" id="email_d" name="email_d" value="">
+            </div>
+            <div class="form-group col-3 justify-content-between">
+              <label for="username_d">UserName</label>
+              <input readonly type="text" class="form-control"  id="username_d" name="username_d" value="">
+            </div>
+            <div class="input-group col-3">
+              <label for="select_role_d">Role:</label>
+              <br/>
+              <select readonly col-3 multiple size="2" name="select_role_d" class="form-control col-3" id="select_role_d">
+                <option th:each="role : ${allRoles}" th:value=""
+                        th:text="${role.getRole() == 'ROLE_ADMIN'} ? 'ROLE_ADMIN' : 'ROLE_USER'"></option>
+              </select>
+              <br/>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+          <a href="" class="btn btn-danger btn-sm"
+             role="button" name="btnDel">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Modal Update-->
+<form enctype="multipart/form-data" id="updateForm">
+<div class="modal fade" id="myUpdate" tabindex="-1"
+     role="dialog" aria-labelledby="myDeleteLabel" aria-hidden="true">
+  <div class="modal-dialog" role="dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="myDeleteLabel">Delete user</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" align="center">
+
+          <div class="form-group col-3 justify-content-between">
+            <label for="id_u">ID</label>
+            <input readonly type="text" class="form-control"  id="id_u" name="id_u" value="" field="id">
+          </div>
+          <div class="form-group col-3 justify-content-between">
+            <label for="firstName_u">First Name</label>
+            <input type="text" class="form-control"  id="firstName_u" name="firstName_u" value="" field="firsName">
+          </div>
+          <div class="form-group col-3 justify-content-between">
+            <label for="lastName_u">Last Name</label>
+            <input type="text" class="form-control" id="lastName_u" name="lastName_u" value="" field="lastName">
+          </div>
+          <div class="form-group col-4 justify-content-between">
+            <label for="email_u">Email</label>
+            <input class="form-control" type="text" id="email_u" name="email_u" value="">
+          </div>
+          <div class="form-group col-3 justify-content-between">
+            <label for="username_u">UserName</label>
+            <input type="text" class="form-control"  id="username_u" name="username_u" value="">
+          </div>
+          <div class="input-group col-12 justify-content-center" align="center">
+            <label for="select_role_u" align="center">Select Role:</label>
+            <select  multiple size="2" name="select_role_u" class="form-control col-3 justify-content-center" id="select_role_u">
+              <option name="op_roles_1" value="ROLE_ADMIN">ADMIN</option>
+              <option name="op_roles_2" value="ROLE_USER">USER</option>
+            </select>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="update">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+<form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+  <input hidden type="submit" value="Sign Out"/>
+</form>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script>
+  $('#myDelete').on('show.bs.modal', function(e) {
+    var Id = $(e.relatedTarget).data('user-id');
+    $(e.currentTarget).find('input[name="id_d"]').val(Id);
+    var FN = $(e.relatedTarget).data('user-fn');
+    $(e.currentTarget).find('input[name="firstName_d"]').val(FN);
+    var LN = $(e.relatedTarget).data('user-ln');
+    $(e.currentTarget).find('input[name="lastName_d"]').val(LN);
+    var Em = $(e.relatedTarget).data('user-em');
+    $(e.currentTarget).find('input[name="email_d"]').val(Em);
+    var UN = $(e.relatedTarget).data('user-un');
+    $(e.currentTarget).find('input[name="username_d"]').val(UN);
+    var R = $(e.relatedTarget).data('user-r');
+    $(e.currentTarget).find('input[name="select_role_d"]').val(R);
+    var htmlDel = "user-delete/" + Id;
+    $(e.currentTarget).find('a[name="btnDel"]').attr("href",htmlDel);
+  });
+</script>
+<script>
+  $('#myUpdate').on('show.bs.modal', function(e) {
+    var Id = $(e.relatedTarget).data('user-id');
+    $(e.currentTarget).find('input[name="id_u"]').val(Id);
+    var FN = $(e.relatedTarget).data('user-fn');
+    $(e.currentTarget).find('input[name="firstName_u"]').val(FN);
+    var LN = $(e.relatedTarget).data('user-ln');
+    $(e.currentTarget).find('input[name="lastName_u"]').val(LN);
+    var Em = $(e.relatedTarget).data('user-em');
+    $(e.currentTarget).find('input[name="email_u"]').val(Em);
+    var UN = $(e.relatedTarget).data('user-un');
+    $(e.currentTarget).find('input[name="username_u"]').val(UN);
+    var R = $(e.relatedTarget).data('user-r');
+    if(R.match("ADMIN")){$(e.currentTarget).find('select[name="select_role_u"]>option[name="op_roles_1"]').attr("selected",true);}
+    if(R.match("USER")){$(e.currentTarget).find('select[name="select_role_u"]>option[name="op_roles_2"]').attr("selected",true);}
+   });
+
+</script>
+<script>
+  $('#updateForm').submit (function  (e) {
+    var user = {
+      id : $(e.currentTarget).find('input[name="id_u"]').val(),
+      username : $(e.currentTarget).find('input[name="username_u"]').val(),
+      firstName : $(e.currentTarget).find('input[name="firstName_u"]').val(),
+      lastName : $(e.currentTarget).find('input[name="lastName_u"]').val(),
+      email : $(e.currentTarget).find('input[name="email_u"]').val(),
+      roles : $(e.currentTarget).find('select[name="select_role_u"]').val()
+    }
+    $.ajax({
+      type: 'POST',
+      contentType : "application/json",
+      dataType: "json",
+      url: "/admin/update",
+      data: JSON.stringify(user),
+      success: function () {
+        console.log('success block');
+      },
+      error: function () {
+        console.log('Unluckly!!!');
+        console.log(this.contentType + "  " + this.dataType + "  " + this.data + "  " + this.url);
+      }
+    });
+  });
+</script>
+
+  </body>
+</html>
