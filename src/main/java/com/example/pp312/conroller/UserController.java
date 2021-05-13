@@ -46,7 +46,7 @@ public class UserController {
             User user = userService.getUserByUserName(username);
             model.addAttribute("user",user);
             model.addAttribute("userRoles",roles);
-            return "user";
+            return "/user.html";
         }
         return "redirect:/user/" + authentication.getName();
     }
